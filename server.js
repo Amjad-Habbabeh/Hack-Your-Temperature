@@ -2,6 +2,8 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const { default: Axios } = require('axios');
+const KEY = require('./config/API_KEY');
+const API_KEY = KEY.API_KEY;
 
 const app = express();
 
@@ -10,7 +12,6 @@ app.use(express.static('puplic'));
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
-
 // index Route
 app.get('/', (req, res) => {
   res.render('index');
@@ -18,7 +19,7 @@ app.get('/', (req, res) => {
 
 app.post('/weather', urlencodedParser, (req, res) => {
   const cityName = req.body.cityName;
-  const API_KEY = require('./sources/keys.json').API_KEY;
+
   let message;
   Axios(
     `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${API_KEY}`
@@ -33,6 +34,7 @@ app.post('/weather', urlencodedParser, (req, res) => {
       res.render('index', { message });
     });
 });
+
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
